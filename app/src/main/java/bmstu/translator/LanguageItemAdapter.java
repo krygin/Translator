@@ -17,7 +17,6 @@ import java.util.List;
  * Created by Ivan on 15.10.2014.
  */
 public class LanguageItemAdapter extends ArrayAdapter<Language> {
-    private int textViewResourceId;
 
     public LanguageItemAdapter(Context context, int resource, int textViewResourceId, List<Language> objects) {
         super(context, resource, textViewResourceId, objects);
