@@ -41,10 +41,8 @@ public class MainActivity extends Activity {
         }
     }
 
-
     public static class LanguagesListFragment extends ListFragment {
         private ArrayList<Language> languages;
-        private ArrayAdapter<String> adapter;
         public LanguagesListFragment() {
         }
 
@@ -56,7 +54,7 @@ public class MainActivity extends Activity {
             for (Language language: languages) {
                 strings.add(language.getLanguageName());
             }
-            setListAdapter(new ArrayAdapter<Language>(getActivity(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, this.languages));
+            setListAdapter(new LanguageItemAdapter(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text1, this.languages));
         }
 
         @Override
