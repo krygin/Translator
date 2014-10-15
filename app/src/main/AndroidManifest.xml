@@ -20,6 +20,17 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
         </activity>
+
+        <service
+            android:name=".ConnectionService"
+            android:exported="false" >
+        </service>
+        <service
+            android:name=".MyIntentService"
+            android:exported="false" >
+        </service>
     </application>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
