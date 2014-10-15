@@ -50,6 +50,11 @@ public class Language implements Parcelable {
         dest.writeStringArray(new String[] {languageCode, languageName});
     }
 
+    @Override
+    public String toString() {
+        return languageName + "-" + languageCode;
+    }
+
     public static final Parcelable.Creator<Language> CREATOR = new Parcelable.Creator<Language>() {
 
         @Override

@@ -29,6 +29,15 @@
             android:name=".MyIntentService"
             android:exported="false" >
         </service>
+
+        <activity
+            android:name=".d"
+            android:label="@string/title_activity_d" >
+        </activity>
+        <activity
+            android:name=".e"
+            android:label="@string/title_activity_e" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

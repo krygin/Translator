@@ -7,5 +7,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="yandex_api_key">trnsl.1.1.20141009T140242Z.a5cbba1e79293f2b.e621f39f66ae2b18ef9a71c2e8d69b543234bd50</string>
+    <string name="title_activity_d">d</string>
+    <string name="title_activity_e">e</string>
 
 </resources>
