@@ -1,38 +1,19 @@
 package bmstu.translator;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
-import android.app.ListFragment;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements LanguageFragment.OnLanguageSelectListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ArrayList<Language> languages = getIntent().getParcelableArrayListExtra(ConnectionService.EXTRA_LANGUAGES);
-        Bundle arguments = new Bundle();
-        arguments.putParcelableArrayList(ConnectionService.EXTRA_LANGUAGES, languages);
-        LanguagesListFragment fragment = new LanguagesListFragment();
-        fragment.setArguments(arguments);
+        Fragment fragment = LanguageFragment.newInstance(languages);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
@@ -41,26 +22,9 @@ public class MainActivity extends Activity {
         }
     }
 
-    public static class LanguagesListFragment extends ListFragment {
-        private ArrayList<Language> languages;
-        public LanguagesListFragment() {
-        }
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            this.languages = getArguments().getParcelableArrayList(ConnectionService.EXTRA_LANGUAGES);
-            ArrayList<String> strings = new ArrayList<String>();
-            for (Language language: languages) {
-                strings.add(language.getLanguageName());
-            }
-            setListAdapter(new LanguageItemAdapter(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text1, this.languages));
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_main, container, false);
-        }
+    @Override
+    public void onLanguageSelect(Language language) {
+        //TODO:Заменить фрагмент со списком языков фрагментом с переводом
+        //сам буду пока доделывать сервис, чтобы возвращал "особые значения" при отсутствии сети
     }
 }
