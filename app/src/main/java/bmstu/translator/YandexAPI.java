@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
@@ -59,15 +61,16 @@ public class YandexAPI {
         return language;
     }
 
-    public JSONObject translate(String text, String lang) {
-        JSONObject language = null;
+    public JSONObject translate(String text, Language lang) {
+        JSONObject translation = null;
         HttpURLConnection connection = null;
+        String languageCode = lang.getLanguageCode();
         try {
-            URL url = new URL(this.url + "translate" + "?" + "key=" + this.key + "&" + "text=" + text + "&" + "lang=" + lang);
+            URL url = new URL(this.url + "translate" + "?" + "key=" + this.key + "&" + "text=" + URLEncoder.encode(text, "UTF-8") + "&" + "lang=" + languageCode);
             connection = (HttpURLConnection)url.openConnection();
             InputStream inputStream = connection.getInputStream();
             String response = readStream(inputStream);
-            language = new JSONObject(response);
+            translation = new JSONObject(response);
             inputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,7 +79,7 @@ public class YandexAPI {
                 connection.disconnect();
             }
         }
-        return language;
+        return translation;
     }
 
     private String readStream(InputStream is) {

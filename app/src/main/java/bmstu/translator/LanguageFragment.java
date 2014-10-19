@@ -35,6 +35,7 @@ public class LanguageFragment extends ListFragment {
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_LANGUAGES, languages);
         fragment.setArguments(args);
+        fragment.setRetainInstance(true);
         return fragment;
     }
 

@@ -33,6 +33,7 @@ public class ConnectionService extends IntentService {
     public static final String EXTRA_LANGUAGE = "bmstu.translator.extra.LANGUAGE";
     public static final String EXTRA_TRANSLATION = "bmstu.translator.extra.TRANSLATION";
     public static final String EXTRA_LANGUAGES = "bmstu.translator.extra.LANGUAGES";
+    public static final String EXTRA_SOURCE_LANGUAGE = "bmstu.translator.extra.SOURCE_LANGUAGE";
 
     public static void startActionGetAllLanguages(Context context) {
         Intent intent = new Intent(context, ConnectionService.class);
@@ -40,7 +41,7 @@ public class ConnectionService extends IntentService {
         context.startService(intent);
     }
 
-    public static void startActionTranslateText(Context context, String text, String lang) {
+    public static void startActionTranslateText(Context context, String text, Language lang) {
         Intent intent = new Intent(context, ConnectionService.class);
         intent.setAction(ACTION_TRANSLATE_TEXT);
         intent.putExtra(EXTRA_TEXT, text);
@@ -50,6 +51,12 @@ public class ConnectionService extends IntentService {
 
     public static IntentFilter getActionReturnLanguagesIntentFilter(){
         IntentFilter intentFilter = new IntentFilter(ACTION_RETURN_LANGUAGES);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        return intentFilter;
+    }
+
+    public static IntentFilter getActionReturnTranslationIntentFilter() {
+        IntentFilter intentFilter = new IntentFilter(ACTION_RETURN_TRANSLATION);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         return intentFilter;
     }
@@ -68,18 +75,28 @@ public class ConnectionService extends IntentService {
                 sendAvailableLanguages(languages);
             } else if (ACTION_TRANSLATE_TEXT.equals(action)) {
                 final String text = intent.getStringExtra(EXTRA_TEXT);
-                final String lang = intent.getStringExtra(EXTRA_LANGUAGE);
-                String translation = handleTranslateText(text, lang);
-                sendTranslation(translation);
+                final Language lang = intent.getParcelableExtra(EXTRA_LANGUAGE);
+                TranslationResult translationResult = handleTranslateText(text, lang);
+                ArrayList<Language> languages = handleGetAllLanguages();
+                Language sourceLanguage = null;
+                for (Language language : languages) {
+                    if (language.getLanguageCode().equals(translationResult.destination.split("-")[0])) {
+                        sourceLanguage = language;
+                        break;
+                    }
+                }
+                String translation = translationResult.getTargetText();
+                sendTranslation(translation, sourceLanguage);
             }
         }
     }
 
-    private void sendTranslation(String translation) {
+    private void sendTranslation(String translation, Language language) {
         Intent intent = new Intent();
         intent.setAction(ACTION_RETURN_TRANSLATION);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         intent.putExtra(EXTRA_TRANSLATION, translation);
+        intent.putExtra(EXTRA_SOURCE_LANGUAGE, language);
         sendBroadcast(intent);
     }
 
@@ -91,18 +108,38 @@ public class ConnectionService extends IntentService {
         sendBroadcast(intent);
     }
 
-    private String handleTranslateText(String text, String lang) {
+    private TranslationResult handleTranslateText(String text, Language lang) {
         YandexAPI api = new YandexAPI();
         JSONObject translation = api.translate(text, lang);
         String result = null;
+        String destination = null;
         try {
             result = translation.getJSONArray("text").getString(0);
+            destination = translation.getString("lang");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return result;
+        return new TranslationResult(result, destination);
     }
 
+
+    private class TranslationResult {
+        private String targetText;
+        private String destination;
+
+        private TranslationResult(String targetText, String destination) {
+            this.targetText = targetText;
+            this.destination = destination;
+        }
+
+        public String getTargetText() {
+            return targetText;
+        }
+
+        public String getDestination() {
+            return destination;
+        }
+    }
     private ArrayList<Language> handleGetAllLanguages() {
         YandexAPI api = new YandexAPI();
         ArrayList<Language> languagesList = new ArrayList<Language>();
